@@ -30,10 +30,10 @@
   <body>
     <svg width="960" height="500"></svg>
     <script>
-      const xValue = d => d.timestamp;
+      const xValue = d => d.Week;
       const xLabel = 'Time';
-      const yValue = d => d.temperature;
-      const yLabel = 'Temperature';
+      const yValue = d => d.Popularity;
+      const yLabel = 'Popularity';
       const margin = { left: 120, right: 30, top: 20, bottom: 120 };
 
       const svg = d3.select('svg');
@@ -77,12 +77,12 @@
         .tickSize(-innerWidth);
 
       const row = d => {
-        d.timestamp = new Date(d.timestamp);
-        d.temperature = +d.temperature;
+        d.Week = new Date(d.Week);
+        d.Popularity = +d.Popularity;
         return d;
       };
 
-      d3.csv('week_temperature_sf.csv', row, data => {
+      d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/steamData.csv', row, data => {
         xScale
           .domain(d3.extent(data, xValue))
           .range([0, innerWidth])
@@ -97,8 +97,9 @@
           .enter().append('circle')
             .attr('cx', d => xScale(xValue(d)))
             .attr('cy', d => yScale(yValue(d)))
-            .attr('fill-opacity', 0.6)
-            .attr('r', 8);
+            .attr('fill-opacity', 0.5)
+            .attr('r', 2)
+            .style("fill", "#69b3a2");
 
         xAxisG.call(xAxis);
         yAxisG.call(yAxis);
