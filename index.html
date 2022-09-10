@@ -17,23 +17,23 @@
       }
       .tick text {
         fill: #8E8883;
-        font-size: 20pt;
+        font-size: 10pt;
         font-family: sans-serif;
       }
       .axis-label {
         fill: #635F5D;
-        font-size: 50pt;
+        font-size: 30pt;
         font-family: sans-serif;
       }
     </style>
   </head>
   <body>
-    <svg width="960" height="500"></svg>
+    <svg width="960" height="600"></svg>
     <script>
       const xValue = d => d.Week;
-      const xLabel = 'Time';
+      const xLabel = 'Time (Per month)';
       const yValue = d => d.Popularity;
-      const yLabel = 'Popularity';
+      const yLabel = 'Search Term Popularity';
       const margin = { left: 120, right: 30, top: 20, bottom: 120 };
 
       const svg = d3.select('svg');
@@ -68,6 +68,7 @@
       const xAxis = d3.axisBottom()
         .scale(xScale)
         .tickPadding(15)
+        .ticks(4)
         .tickSize(-innerHeight);
 
       const yAxis = d3.axisLeft()
@@ -82,7 +83,7 @@
         return d;
       };
 
-      d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/steamData.csv', row, data => {
+      d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/monthlySteamData2.csv', row, data => {
         xScale
           .domain(d3.extent(data, xValue))
           .range([0, innerWidth])
@@ -97,13 +98,14 @@
           .enter().append('circle')
             .attr('cx', d => xScale(xValue(d)))
             .attr('cy', d => yScale(yValue(d)))
-            .attr('fill-opacity', 0.5)
-            .attr('r', 2)
+            .attr('fill-opacity', 0.8)
+            .attr('r', 4)
             .style("fill", "#69b3a2");
 
         xAxisG.call(xAxis);
         yAxisG.call(yAxis);
       });
+      
     </script>
   </body>
 </html>
