@@ -82,8 +82,8 @@
         d.Popularity = +d.Popularity;
         return d;
       };
-
-      d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/monthlySteamData2.csv', row, data => {
+      d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/monthlySteamData.csv', row, data => {
+        
         xScale
           .domain(d3.extent(data, xValue))
           .range([0, innerWidth])
@@ -104,8 +104,30 @@
 
         xAxisG.call(xAxis);
         yAxisG.call(yAxis);
+
+        d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/monthlySteamData.csv', row, data2 =>{
+          xScale
+          .domain(d3.extent(data, xValue))
+          .range([0, innerWidth])
+          .nice();
+
+        yScale
+          .domain(d3.extent(data, yValue))
+          .range([innerHeight, 0])
+          .nice();
+
+        g.selectAll('circle').data(data)
+          .enter().append('circle')
+            .attr('cx', d => xScale(xValue(d)))
+            .attr('cy', d => yScale(yValue(d)))
+            .attr('fill-opacity', 0.8)
+            .attr('r', 10)
+            .style("fill", "#69b3a2");
+
+        xAxisG.call(xAxis);
+        yAxisG.call(yAxis);
+        });
       });
-      
     </script>
   </body>
 </html>
