@@ -26,16 +26,19 @@
         font-family: sans-serif;
       }
     </style>
+
+    <header style="font-size: 20pt; color: #42403f;">Hypothesis: Boosts in search term popularity for "Steam" and "Covid are linked.</header>
   </head>
   <body>
-    <svg width="960" height="600"></svg>
+    <svg width="800" height="600"></svg>
     <script>
+
       const xValue = d => d.Time;
       const xLabel = 'Time (Per month)';
       const yValue = d => d.SteamPopularity;
       const yValue2 = d => d.CovidPopularity;
       const yLabel = 'Search Term Popularity';
-      const margin = { left: 120, right: 30, top: 20, bottom: 120 };
+      const margin = { left: 120, right: 30, top: 20, bottom: 140 };
 
       const svg = d3.select('svg');
       const width = svg.attr('width');
@@ -49,6 +52,8 @@
           .attr('transform', `translate(0, ${innerHeight})`);
       const yAxisG = g.append('g');
 
+      const tAxisG = g.append('g')
+          .attr('transform', `translate(0, ${innerHeight})`);
       xAxisG.append('text')
           .attr('class', 'axis-label')
           .attr('x', innerWidth / 2)
@@ -91,7 +96,7 @@
       return {
         name: grpName,
         values: data.map(function(d) {
-          return {time: d.time, value: +d[grp]};
+          return {time: d.time, value: +d[grpName]};
         })
       };
     });
@@ -113,13 +118,13 @@
             .attr('cy', d => yScale(d.SteamPopularity))
             .attr('fill-opacity', 0.8)
             .attr('r', 4)
-            .style("fill", "#69b3a2");
+            .style("fill", "#00adee");
 
         // Draw steam data ines
         g.append("path")
         .datum(data)
         .attr("fill", "none")
-        .attr("stroke", "#69b3a2")
+        .attr("stroke", "#00adee")
         .attr("stroke-width", 1.5)
         .attr("d", d3.line()
           .x((d => xScale(d.Time)))
@@ -148,7 +153,19 @@
         
         xAxisG.call(xAxis);
         yAxisG.call(yAxis);
+
+        // Handmade legend
+  svg.append("circle").attr("cx",innerWidth / 2 + 100).attr("cy",35).attr("r", 4).style("fill", "#00adee")
+  svg.append("circle").attr("cx",innerWidth / 2+ 100).attr("cy",65).attr("r", 4).style("fill", "#DF2F2F")
+  svg.append("text").attr("x", innerWidth / 2+ 110).attr("y", 35).text("Steam").style("font-size", "10pt" ).attr("alignment-baseline","middle")
+  svg.append("text").attr("x", innerWidth / 2+ 110).attr("y", 65).text("Covid").style("font-size", "10pt",).attr("alignment-baseline","middle")
       });
     </script>
+    
+
+    
   </body>
+
+
+  
 </html>
