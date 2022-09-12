@@ -30,9 +30,10 @@
   <body>
     <svg width="960" height="600"></svg>
     <script>
-      const xValue = d => d.Week;
+      const xValue = d => d.Time;
       const xLabel = 'Time (Per month)';
-      const yValue = d => d.Popularity;
+      const yValue = d => d.SteamPopularity;
+      const yValue2 = d => d.CovidPopularity;
       const yLabel = 'Search Term Popularity';
       const margin = { left: 120, right: 30, top: 20, bottom: 120 };
 
@@ -40,7 +41,7 @@
       const width = svg.attr('width');
       const height = svg.attr('height');
       const innerWidth = width - margin.left - margin.right;
-      const innerHeight = height - margin.top - margin.bottom;
+      const innerHeight = height - margin.top - margin.bottom + 20;
 
       const g = svg.append('g')
           .attr('transform', `translate(${margin.left},${margin.top})`);
@@ -78,55 +79,75 @@
         .tickSize(-innerWidth);
 
       const row = d => {
-        d.Week = new Date(d.Week);
-        d.Popularity = +d.Popularity;
+        d.Time = new Date(d.Time);
+        d.SteamPopularity = +d.SteamPopularity;
+        d.CovidPopularity = +d.CovidPopularity;
         return d;
       };
-      d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/monthlySteamData.csv', row, data => {
+      d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/monthlyData.csv', row, data => {
         
+        var allGroup = ["SteamPopularity", "CovidPopularity"]
+        var dataReady = allGroup.map( function(grpName) { // .map allows to do something for each element of the list
+      return {
+        name: grpName,
+        values: data.map(function(d) {
+          return {time: d.time, value: +d[grpName]};
+        })
+      };
+    });
         xScale
           .domain(d3.extent(data, xValue))
           .range([0, innerWidth])
           .nice();
 
         yScale
-          .domain(d3.extent(data, yValue))
+          .domain([0,100])
           .range([innerHeight, 0])
           .nice();
 
+        // Draw steam data
         g.selectAll('circle').data(data)
-          .enter().append('circle')
-            .attr('cx', d => xScale(xValue(d)))
-            .attr('cy', d => yScale(yValue(d)))
+          .enter()
+          .append('circle')
+            .attr('cx', d => xScale(d.Time))
+            .attr('cy', d => yScale(d.SteamPopularity))
             .attr('fill-opacity', 0.8)
             .attr('r', 4)
             .style("fill", "#69b3a2");
 
-        xAxisG.call(xAxis);
-        yAxisG.call(yAxis);
-
-        d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/monthlySteamData.csv', row, data2 =>{
-          xScale
-          .domain(d3.extent(data, xValue))
-          .range([0, innerWidth])
-          .nice();
-
-        yScale
-          .domain(d3.extent(data, yValue))
-          .range([innerHeight, 0])
-          .nice();
-
-        g.selectAll('circle').data(data)
-          .enter().append('circle')
-            .attr('cx', d => xScale(xValue(d)))
-            .attr('cy', d => yScale(yValue(d)))
+        // Draw steam data ines
+        g.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "#69b3a2")
+        .attr("stroke-width", 1.5)
+        .attr("d", d3.line()
+          .x((d => xScale(d.Time)))
+          .y(d => yScale(d.SteamPopularity))
+          )
+        // Draw covid data
+        g.selectAll('myPoints').data(data)
+          .enter()
+          .append('circle')
+            .attr('cx', d => xScale(d.Time))
+            .attr('cy', d => yScale(d.CovidPopularity))
             .attr('fill-opacity', 0.8)
-            .attr('r', 10)
-            .style("fill", "#69b3a2");
-
+            .attr('r', 4)
+            .style("fill", "#DF2F2F");
+        // Draw covid data lines
+        g.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "#DF2F2F")
+        .attr("stroke-width", 1.5)
+        .attr("d", d3.line()
+          .x((d => xScale(d.Time)))
+          .y(d => yScale(d.CovidPopularity))
+          )
+            
+        
         xAxisG.call(xAxis);
         yAxisG.call(yAxis);
-        });
       });
     </script>
   </body>
