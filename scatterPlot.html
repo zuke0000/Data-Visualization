@@ -91,7 +91,7 @@
       return {
         name: grpName,
         values: data.map(function(d) {
-          return {time: d.time, value: +d[grpName]};
+          return {time: d.time, value: +d[grp]};
         })
       };
     });
