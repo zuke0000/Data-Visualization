@@ -14,24 +14,24 @@
     }
     .axis-label {
       fill: #635F5D;
-      font-size: 30pt;
+      font-size: 15pt;
       font-family: sans-serif;
     }
   </style>
 
 <!-- Create a div where the graph will take place -->
-<div id="my_dataviz"></div>
+<div id="my_dataviz">
 <script>
 
-const yLabel = 'Search Term Popularity';
-const xLabel = 'Popularity';
+const yLabel = 'Search Term Popularity \n (Relative to Itself)';
+const xLabel = 'Search Term Popularity \n (Relative to Itself)';
 
 
 
     // set the dimensions and margins of the graph
     var margin = {top: 20, right: 20, bottom: 150, left: 50},
         width = 800 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom;
+        height = 500 - margin.top - margin.bottom;
 
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom + 20;
@@ -78,7 +78,7 @@ const xLabel = 'Popularity';
           y.domain([0, d3.max(bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
       svg.append("g")
         // .attr("transform", "translate(50, 0)")
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y))
           
     
       // append the bar rectangles to the svg element
@@ -115,7 +115,7 @@ const xLabel = 'Popularity';
           xAxisG.append('text')
           .attr('class', 'axis-label')
           .attr('x', innerWidth / 2)
-          .attr('y', height + 100)
+          .attr('y', height + 80)
           .style('text-anchor', 'middle')
           .text(xLabel);
 
@@ -128,10 +128,11 @@ const xLabel = 'Popularity';
           .style('text-anchor', 'middle')
           // .text(yLabel); // NOTE: not using, does a histogram frequency need to be labelled?
 
-        svg.append("circle").attr("cx",innerWidth / 2).attr("cy",35).attr("r", 4).style("fill", "#00adee")
-        svg.append("circle").attr("cx",innerWidth / 2).attr("cy",65).attr("r", 4).style("fill", "#DF2F2F")
-        svg.append("text").attr("x", innerWidth / 2+10).attr("y", 35).text("Steam").style("font-size", "10pt" ).attr("alignment-baseline","middle")
-        svg.append("text").attr("x", innerWidth / 2+10).attr("y", 65).text("Covid").style("font-size", "10pt",).attr("alignment-baseline","middle")
+      // Handmade legend
+  svg.append("rect").attr("x",innerWidth /35 - 6).attr("y",30).attr("width",10).attr("height",10).style("fill", "#00adee")
+  svg.append("rect").attr("x",innerWidth /35 - 6).attr("y",60).attr("width",10).attr("height",10).style("fill", "#DF2F2F")
+  svg.append("text").attr("x", innerWidth / 35+ 6).attr("y", 35).text("Steam").style("font-size", "10pt" ).attr("alignment-baseline","middle")
+  svg.append("text").attr("x", innerWidth / 35+ 6).attr("y", 65).text("Covid").style("font-size", "10pt",).attr("alignment-baseline","middle")
         xAxisG.call(xAxis);
         yAxisG.call(yAxis);
 
@@ -140,3 +141,4 @@ const xLabel = 'Popularity';
 
     });
     </script>
+    </div>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <title>Temperature Visualization</title>
+    <title style="text-align: right;">Temperature Visualization</title>
     <style>
       body {
         margin: 0px;
@@ -22,22 +22,22 @@
       }
       .axis-label {
         fill: #635F5D;
-        font-size: 30pt;
+        font-size: 15pt;
         font-family: sans-serif;
       }
     </style>
 
-    <header style="font-size: 20pt; color: #42403f;">Hypothesis: Boosts in search term popularity for "Steam" and "Covid are linked.</header>
+    <header style="font-size: 15pt; color: #42403f; text-align: center;">Hypothesis: In google search trends, Boosts in terms "Steam" and "Covid are linked.</header>
   </head>
   <body>
-    <svg width="800" height="600"></svg>
+    <svg width="800" height="500"></svg>
     <script>
 
       const xValue = d => d.Time;
       const xLabel = 'Time (Per month)';
       const yValue = d => d.SteamPopularity;
       const yValue2 = d => d.CovidPopularity;
-      const yLabel = 'Search Term Popularity';
+      const yLabel = 'Search Term Popularity \n (Relative to Itself)';
       const margin = { left: 120, right: 30, top: 20, bottom: 140 };
 
       const svg = d3.select('svg');
@@ -57,7 +57,7 @@
       xAxisG.append('text')
           .attr('class', 'axis-label')
           .attr('x', innerWidth / 2)
-          .attr('y', 100)
+          .attr('y', 80)
           .text(xLabel);
 
       yAxisG.append('text')
@@ -155,15 +155,15 @@
         yAxisG.call(yAxis);
 
         // Handmade legend
-  svg.append("circle").attr("cx",innerWidth / 2 + 100).attr("cy",35).attr("r", 4).style("fill", "#00adee")
-  svg.append("circle").attr("cx",innerWidth / 2+ 100).attr("cy",65).attr("r", 4).style("fill", "#DF2F2F")
-  svg.append("text").attr("x", innerWidth / 2+ 110).attr("y", 35).text("Steam").style("font-size", "10pt" ).attr("alignment-baseline","middle")
-  svg.append("text").attr("x", innerWidth / 2+ 110).attr("y", 65).text("Covid").style("font-size", "10pt",).attr("alignment-baseline","middle")
+  svg.append("circle").attr("cx",innerWidth / 5+10).attr("cy",35).attr("r", 4).style("fill", "#00adee")
+  svg.append("circle").attr("cx",innerWidth / 5+10).attr("cy",65).attr("r", 4).style("fill", "#DF2F2F")
+  svg.append("text").attr("x", innerWidth / 5+ 16).attr("y", 35).text("Steam").style("font-size", "10pt" ).attr("alignment-baseline","middle")
+  svg.append("text").attr("x", innerWidth / 5+ 16).attr("y", 65).text("Covid").style("font-size", "10pt",).attr("alignment-baseline","middle")
       });
     </script>
     
-
-    
+    <padding></padding>
+  <img src="https://media.discordapp.net/attachments/796162862228832277/1019064938049851442/unknown.png" alt="">
   </body>
 
 
