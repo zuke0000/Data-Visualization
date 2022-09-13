@@ -90,7 +90,7 @@
         d.CovidPopularity = +d.CovidPopularity;
         return d;
       };
-      d3.csv('monthlyData.csv', row, data => {
+      d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/monthlyData.csv', row, data => {
         
         var allGroup = ["SteamPopularity", "CovidPopularity"]
         var dataReady = allGroup.map( function(grpName) { // .map allows to do something for each element of the list
