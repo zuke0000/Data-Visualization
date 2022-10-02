@@ -34,10 +34,9 @@
     <svg width="800" height="500"></svg>
     <script>
 
-      const xValue = d => d.Time;
+      const xValue = d => d.LATITUDE;
       const xLabel = 'Time (Per month)';
-      const yValue = d => d.SteamPopularity;
-      const yValue2 = d => d.CovidPopularity;
+      const yValue = d => d.LONGITUDE;
       const yLabel = 'Search Term Popularity \n (Relative to Itself)';
       const margin = { left: 120, right: 30, top: 20, bottom: 140 };
 
@@ -69,7 +68,7 @@
           .style('text-anchor', 'middle')
           .text(yLabel);
 
-      const xScale = d3.scaleTime();
+      const xScale = d3.scaleLinear();
       const yScale = d3.scaleLinear();
 
       const xAxis = d3.axisBottom()
@@ -85,71 +84,50 @@
         .tickSize(-innerWidth);
 
       const row = d => {
-        d.Time = new Date(d.Time);
-        d.SteamPopularity = +d.SteamPopularity;
-        d.CovidPopularity = +d.CovidPopularity;
+        d.LONGITUDE = +d.LONGITUDE;
+        d.LATITUDE = +d.LATITUDE;
+        d.LIGHTING_CONDITION = +d.LIGHTING_CONDITION;
+        d.INJURIES_FATAL = +d.INJURIES_FATAL;
         return d;
       };
-      d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/monthlyData.csv', row, data => {
+      d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/daylightCrashes.csv', row, data => {
         
+        var latitudeMax = d3.max(data, function(d) { return d.LATITUDE; } );
+        var longitudeMax = d3.max(data, function(d) { return d.LONGITUDE; } );
+        var latitudeMin = d3.min(data, function(d) { return d.LATITUDE; } );
+        var longitudeMin = d3.min(data, function(d) { return d.LONGITUDE; } );
+
         var allGroup = ["SteamPopularity", "CovidPopularity"]
-        var dataReady = allGroup.map( function(grpName) { // .map allows to do something for each element of the list
-      return {
-        name: grpName,
-        values: data.map(function(d) {
-          return {time: d.time, value: +d[grpName]};
-        })
-      };
-    });
+
+        // NOTE: probably useless stuff commented out
+        //     var dataReady = allGroup.map( function(grpName) { // .map allows to do something for each element of the list
+              
+        //   return {
+        //     name: grpName,
+        //     values: data.map(function(d) {
+        //       return {LATITUDE: d.LATITUDE, value: +d[grpName]};
+        //     })
+        //   };
+        // });
         xScale
           .domain(d3.extent(data, xValue))
           .range([0, innerWidth])
           .nice();
 
         yScale
-          .domain([0,100])
+        .domain(d3.extent(data, yValue))
           .range([innerHeight, 0])
           .nice();
 
-        // Draw steam data
+        // Draw data
         g.selectAll('circle').data(data)
           .enter()
           .append('circle')
-            .attr('cx', d => xScale(d.Time))
-            .attr('cy', d => yScale(d.SteamPopularity))
+            .attr('cx', d => xScale(d.LONGITUDE))
+            .attr('cy', d => yScale(d.LATITUDE))
             .attr('fill-opacity', 0.8)
             .attr('r', 4)
             .style("fill", "#00adee");
-
-        // Draw steam data ines
-        g.append("path")
-        .datum(data)
-        .attr("fill", "none")
-        .attr("stroke", "#00adee")
-        .attr("stroke-width", 1.5)
-        .attr("d", d3.line()
-          .x((d => xScale(d.Time)))
-          .y(d => yScale(d.SteamPopularity))
-          )
-        // Draw covid data
-        g.selectAll('myPoints').data(data)
-          .enter()
-          .append('circle')
-            .attr('cx', d => xScale(d.Time))
-            .attr('cy', d => yScale(d.CovidPopularity))
-            .attr('fill-opacity', 0.8)
-            .attr('r', 4)
-            .style("fill", "#DF2F2F");
-        // Draw covid data lines
-        g.append("path")
-        .datum(data)
-        .attr("fill", "none")
-        .attr("stroke", "#DF2F2F")
-        .attr("stroke-width", 1.5)
-        .attr("d", d3.line()
-          .x((d => xScale(d.Time)))
-          .y(d => yScale(d.CovidPopularity))
-          )
             
         
         xAxisG.call(xAxis);
@@ -164,7 +142,6 @@
     </script>
     
     <padding></padding>
-  <img src="https://media.discordapp.net/attachments/796162862228832277/1019064938049851442/unknown.png" alt="">
   </body>
 
 

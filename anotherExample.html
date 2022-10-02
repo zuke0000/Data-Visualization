@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Mercator projection</title>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <style>
+      body {
+        background-color: gray;
+        margin: 1em auto;
+        width: 500px;
+      }
+      svg {
+        background-color: white;
+      }
+      path.chicago {
+        fill: #F7DFAD;
+        stroke: #5C8AA9;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      var w = 480;
+      var h = 250;
+
+      var svg = d3.select("body")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h);
+
+      var map = d3.json("Boundaries - Community Areas (current).geojson", function(error, map) {
+        if (error) return console.error(error)
+
+        var proj = d3.geo.albers()
+          .center([0, 41.83])
+          .rotate([87.65, 0])
+          .parallels([40, 45])
+          .scale(30000)
+          .translate([w / 2, h / 2])
+
+        var defaultAlbers = d3.geo.albers()
+        console.log('default albers', defaultAlbers.center());
+
+        svg.selectAll("path")
+          .data(map.features)
+          .enter().append("path")
+          .attr("class", "chicago")
+          .attr("d", d3.geo.path().projection(proj))
+      });
+    </script>
+  </body>
+</html>
