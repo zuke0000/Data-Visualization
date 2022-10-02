@@ -7,12 +7,12 @@
     
     <style>
       body {
-        background-color: white;
+        background-color: whitesmoke;
         margin: 1em auto;
         width: 500px;
       }
       svg {
-        background-color: white;
+        background-color: whitesmoke;
       }
       path.chicago {
         fill: whitesmoke;
@@ -20,7 +20,7 @@
       }
     </style>
   </head>
-  <header style="font-size: 15pt; color: #42403f; text-align: center;">Hypothesis: Crashes in darkness are more fatal than in daylight </header>
+  <header style="font-size: 15pt; color: #42403f; text-align: center;">Hypothesis: Fatal crashes are more frequent in daylight than in darkness </header>
   <a href="https://data.cityofchicago.org/Transportation/Traffic-Crashes-Crashes/85ca-t3if" style="font-size: 15pt; text-align: center; padding-left: 15%;">Source: Chicago traffic crashes 2015-present</a>
   
   
@@ -54,7 +54,7 @@
 
           var myColor = d3.scaleSequential()
             .interpolator(d3.interpolateWarm)
-            .domain([2,5])
+            .domain([2,7])
 
         svg.select('#mapLayer').selectAll("path")
           .data(map.features)
@@ -88,7 +88,7 @@
             //.style("fill", "#00adee");
             .style("fill", function(d) { return myColor(d.INJURIES_FATAL)} )
 
-      svg.append("text").attr("x", w / 3).attr("y", 15).text("Daylight Crashes").style("font-size", "12pt" ).attr("alignment-baseline","middle").style("fill", '#42403f')
+      svg.append("text").attr("x", w / 3).attr("y", 15).text("Crashes in Daylight").style("font-size", "12pt" ).attr("alignment-baseline","middle").style("fill", '#42403f')
       svg.append("text").attr("x", w / 10+ 16).attr("y", 35).text("Deaths per Crash").style("font-size", "10pt" ).attr("alignment-baseline","middle")
       // 1 death
       svg.append("circle").attr("cx",w / 10+10).attr("cy",55).attr("r", 3).style("fill", function(d) { return myColor(1)} ).attr('fill-opacity', 0.9)
@@ -131,7 +131,7 @@
 
           var myColor = d3.scaleSequential()
             .interpolator(d3.interpolateWarm)
-            .domain([2,5])
+            .domain([2,7])
 
         svg.select('#mapLayer').selectAll("path")
           .data(map.features)
