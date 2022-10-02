@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Spotify Songs</title>
+    <!--Load d3.js-->
+    <script src="http://d3js.org/d3.v4.js"></script>
+    <style>
+        /* .selected {
+            opacity: 1 !important;
+            stroke: black;
+            stroke-width: 1px;
+        }
+        .axis-grid line {
+            stroke: #def;
+        } */
+    </style>
+    <br>
+    <header style="text-align: center;">Hypothesis: Songs in the Spotify weekly charts stay the longest on the weekly
+        charts when they have the most danceability.</header>
+</head>
+
+<body>
+    <br>
+    <br>
+    <br>
+    <div>
+        <div style="float: left; padding-left: 150px" ; id="my_dataviz"></div>
+        <div style="float: right; padding-right: 150px" id="my_datavizhist"></div>
+    </div>
+    <script>
+        // 1== major
+        // set the dimensions and margins of the graph
+        var margin = { top: 10, right: 30, bottom: 40, left: 60 },
+            width = 520 - margin.left - margin.right,
+            height = 520 - margin.top - margin.bottom;
+
+        // append the svg object to the body of the page
+        var svg = d3.select("#my_dataviz")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        //Read the data
+        d3.csv("https://raw.githubusercontent.com/Rileyj-m/DataVizData1/main/spotify_top_charts_22.csv", function (data) {
+
+            // Add X axis
+            var x = d3.scaleLinear()
+                .domain([0, 280])
+                .range([0, width]);
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+
+            // Add Y axis
+            var y = d3.scaleLinear()
+                .domain([0, 1])
+                .range([height, 0]);
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // Add X axis label:
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("x", width / 2 + margin.left)
+                .attr("y", height + margin.top + 27)
+                .text("Weeks on Charts");
+
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 20)
+                .attr("x", -margin.top - height / 2 + 78)
+                .text("Danceability");
+
+            var color = d3.scaleOrdinal()
+                .domain(["1", "0"])
+                .range(["#F8766D", "#619CFF"]);
+
+            // Add dots
+            svg.append('g')
+                .selectAll("dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", function (d) { return x(d.weeks_on_chart); })
+                .attr("cy", function (d) { return y(d.danceability); })
+                .attr("r", 1.5)
+                .style("fill", function (d) { return color(d.mode) });
+
+            // Handmade legend
+            svg.append("circle").attr("cx", width / 2 + 155).attr("cy", 25).attr("r", 4).style("fill", "#F8766D")
+            svg.append("circle").attr("cx", width / 2 + 155).attr("cy", 45).attr("r", 4).style("fill", "#619CFF")
+            svg.append("text").attr("x", width / 2 + 165).attr("y", 25).text("Major Scale").style("font-size", "10pt").attr("alignment-baseline", "middle")
+            svg.append("text").attr("x", width / 2 + 165).attr("y", 45).text("Minor Scale").style("font-size", "10pt",).attr("alignment-baseline", "middle")
+        })
+
+        // // append the svg object to the body of the page
+        // var svg2 = d3.select("#my_datavizhist")
+        //     .append("svg")
+        //     .attr("width", width + margin.left + margin.right)
+        //     .attr("height", height + margin.top + margin.bottom)
+        //     .append("g")
+        //     .attr("transform",
+        //         "translate(" + margin.left + "," + margin.top + ")");
+
+        // // get the data
+        // d3.csv("https://raw.githubusercontent.com/Rileyj-m/DataVizData1/main/spotify_top_charts_22.csv", function (data) {
+
+        //     // X axis: scale and draw:
+        //     var x = d3.scaleLinear()
+        //         .domain([0.0, 1])     // can use this instead of 1000 to have the max of data: d3.max(data, function(d) { return +d.price })
+        //         .range([0, width]);
+        //     svg2.append("g")
+        //         .attr("transform", "translate(0," + height + ")")
+        //         .call(d3.axisBottom(x));
+
+        //     // set the parameters for the histogram
+        //     var histogram = d3.histogram()
+        //         .value(function (d) { return d.danceability; })   // I need to give the vector of value
+        //         .domain(x.domain())  // then the domain of the graphic
+        //         .thresholds(x.ticks(70)); // then the numbers of bins
+
+        //     // And apply this function to data to get the bins
+        //     var bins = histogram(data);
+
+        //     // Y axis: scale and draw:
+        //     var y = d3.scaleLinear()
+        //         .range([height, 0]);
+        //     y.domain([0, d3.max(bins, function (d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
+        //     svg2.append("g")
+        //         .call(d3.axisLeft(y));
+
+        //     svg2.append("text")
+        //         .attr("text-anchor", "end")
+        //         .attr("x", width / 2 + margin.left)
+        //         .attr("y", height + margin.top + 27)
+        //         .text("Danceability");
+
+        //     svg2.append("text")
+        //         .attr("text-anchor", "end")
+        //         .attr("transform", "rotate(-90)")
+        //         .attr("y", -margin.left + 20)
+        //         .attr("x", -margin.top - height / 2 + 78)
+        //         .text("# of Songs on Charts");
+
+        //     // append the bar rectangles to the svg element
+        //     svg2.selectAll("rect")
+        //         .data(bins)
+        //         .enter()
+        //         .append("rect")
+        //         .attr("x", 1)
+        //         .attr("transform", function (d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+        //         .attr("width", function (d) { return x(d.x1) - x(d.x0) - 1; })
+        //         .attr("height", function (d) { return height - y(d.length); })
+        //         .style("fill", "#69b3a2")
+        // })
+    </script>
+</body>
+
+</html>
