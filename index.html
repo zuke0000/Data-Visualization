@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Mercator projection</title>
+    <title>Map of fatal crashes in Chicago</title>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     
     <style>
@@ -54,7 +54,7 @@
 
           var myColor = d3.scaleSequential()
             .interpolator(d3.interpolateWarm)
-            .domain([2,7])
+            .domain([2.5,6])
 
         svg.select('#mapLayer').selectAll("path")
           .data(map.features)
@@ -131,7 +131,7 @@
 
           var myColor = d3.scaleSequential()
             .interpolator(d3.interpolateWarm)
-            .domain([2,7])
+            .domain([2.5,6])
 
         svg.select('#mapLayer').selectAll("path")
           .data(map.features)
