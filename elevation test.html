@@ -55,20 +55,23 @@
           .attr("class", "africa")
           .attr("d", d3.geoPath().projection(projection))
 
+          canvis = svg.select("#vis")
+
+          var context = canvis.node().getContext('2d')
+
+          var image = new Image()
+          image.onload = function () {
+              context.drawImage(image, 0, 0, image.width, image.height, 0, 0, width, height)
+          }
+          image.src = '2000_Precipiations.png'
+
       });
 
-      async function renderVis() {
-        let tiff = await d3.buffer('elevations.tif')
-        .then(buffer => GeoTIFF.fromArrayBuffer(buffer));
-        let image = await tiff.getImage();
-        let rasters = await image.readRasters();
-        let values = rasters[0];
-        let w = image.getWidth(), h = image.getHeight();
-      }
-      renderVis();
 
       
-
+      
+      
+      
     </script>
 </body>
 </html>
