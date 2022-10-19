@@ -1,12 +1,15 @@
 <html>
+<script src="https://d3js.org/d3.v4.min.js"></script>
 <script src='https://d3js.org/d3.v6.min.js'></script>
+
 <script src='https://cdn.jsdelivr.net/npm/geotiff'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js'></script>
 
 <title>Global Rainfall</title>
 
-<header style="font-size: 15pt; color: #42403f; text-align: center;">Hypothesis: Global rainfall is similar from years 2000 and 2010. </header>
+<header style="font-size: 15pt; color: #42403f; text-align: center;">Hypothesis: Rainfall in Africa is similar from years 2000 and 2010. </header>
 <header style="font-size: 12pt; color: #42403f; text-align: left;">Data of rainfall is taken from January, 2000 and January, 2010 by <a href="https://neo.gsfc.nasa.gov/view.php?datasetId=TRMM_3B43M&year=2000">https://neo.gsfc.nasa.gov/</a>. Rainfall data is for the mentioned month and may not be indicitive of wider trends.</header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;">References: Riley Marsden assisted me with setting up the GEOJSON over the raster data. Additionally, I used this <a href="https://yangdanny97.github.io/blog/2020/11/26/D3-elevations">raster plot example</a>.</header>
 
 <style>
   body {
@@ -23,11 +26,32 @@
     stroke: #969696;
     stroke: #000000;
   }
+  #legend {
+    background-color: aqua;
+    background: #000000;
+    fill: whitesmoke;
+  }
+  /* #raster{
+    width:900px;
+    height:600px;
+    overflow:hidden;
+} */
 </style>
 
 
 <body>
     <div id='vis'></div>
+
+    <svg class="godihate" id="World" width="1440" height="700">
+      <g id="raster"></g>
+      <g id="map"></g>
+  </svg>
+
+  <svg class="godihate" id="World2" width="1440" height="700">
+    <g id="raster2"></g>
+    <g id="map2"></g>
+</svg>
+</svg>
 
 
 <script>
@@ -38,70 +62,84 @@ let image = await tiff.getImage();
 let rasters = await image.readRasters();
 let values = rasters[0];
 let w = image.getWidth(), h = image.getHeight();
-let scaling = Math.min(window.innerWidth * .9 / w, window.innerHeight * .3 / h);
+let scaling = Math.min(window.innerWidth * .9 / w, window.innerHeight * .9 / h);
 let width = w * scaling, height = h * scaling;
-let svg = d3.select('#vis').append('svg').attr('width', width).attr('height', height);
+let svg = d3.select('#Raster').attr('width', width).attr('height', height);
 let contours = d3.contours().size([w, h]);
 let contourData = contours(values);
 
 let colorScale = d3.scaleSequential(d3.extent(values), d3.interpolateBlues);
 let path = d3.geoPath();
-let elevations = svg.selectAll('.elevations').data(contourData);
+let elevations = svg.selectAll('#raster').data(contourData);
 elevations.enter().append('path')
-    .attr('class', 'elevations')
     .attr('fill', d => colorScale(d.value))
     .attr('stroke', 'black')
     .attr('stroke-width', 0.0)
     .style('opacity', 0.9)
     .attr('d', d => path(d))
     .attr('transform', `scale(${scaling})`)
-    svg.append("text").attr("x", (w / 3.45)).attr("y", 25).text("January 2000 Precipitation").style("font-size", "14pt" ).attr("alignment-baseline","middle").style("fill", 'white');
+    .attr('clip-path', null)
+    svg.append("text").attr("x", (width / 2.4)).attr("y", 100).text("January 2000 Precipitation").style("font-size", "14pt" ).attr("alignment-baseline","middle").style("fill", 'white');
 
+
+
+    
 // draw legend
-svg = d3.select('#vis').append('svg').attr('width', width).attr('height', height + 100);
+svg = d3.select('#World').append('svg').attr('width', width).attr('height', height + 100).attr('id','legend');
 let legend = d3.legendColor()
-    .scale(colorScale)
-    .orient('horizontal')
-    .shapeWidth(50)
-    .title('Rainfall (mm)')
-    .labels(["1", "10", "100", "200", "2000"]);
+.scale(colorScale)
+.orient('horizontal')
+.shapeWidth(50)
+.title('Rainfall (mm)')
+.labels(["1", "10", "100", "200", "2000"]);
 svg.append('g')
-    .attr('transform', `translate(10,${height -20})`)
+    .attr('transform', `translate(5,100)`)
     .call(legend);
-}
 
+
+
+  }
 
 // used to create the map of the world over the raster
-   function renderMap() {
-            const svg = d3.select("#vis"),
-                width = +svg.attr("width"),
-                height = +svg.attr("height");
+   async function renderMap() {
+            const svg = d3.select("#World");
+                //width = +svg.attr("width"),
+                //height = +svg.attr("height");
+                let tiff = await d3.buffer('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/2000_Precipiations_720x360.TIFF')
+                    .then(buffer => GeoTIFF.fromArrayBuffer(buffer));
+                let image = await tiff.getImage();
+
+
+                let w = image.getWidth(), h = image.getHeight();
+                let scaling = Math.min(window.innerWidth * .9 / w, window.innerHeight * .9 / h);
+                let width = w * scaling, height = h * scaling;
 
             let projection = d3.geoMercator()
-                .scale(100)
+                .scale(230)
                 .translate([width / 2, height / 2]);
 
             // Load external data and boot
-            d3.json("jsons/world.json").then(function (data) {
+            d3.json("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/Africa.geojson").then(function (data) {
 
                 // Draw the map
-                d3.select("#allobj")
+                d3.select("#map")
+                    .attr('width', width)
+                    .attr('height', height)
                     .selectAll("path")
                     .data(data.features)
                     .join("path")
                     .attr("fill", "none")
                     .attr("d", d3.geoPath()
-                        .projection(projection)
+                    .projection(projection)
                     )
                     .style("stroke", "black")
+                    .attr("stroke-width", 1.5)
             })
           }
 
 renderVis();
 renderMap();
     </script>
-
-
 
 <script>
   async function renderVis() {
@@ -111,43 +149,84 @@ renderMap();
   let rasters = await image.readRasters();
   let values = rasters[0];
   let w = image.getWidth(), h = image.getHeight();
-  let scaling = Math.min(window.innerWidth * .9 / w, window.innerHeight * .3 / h);
+  let scaling = Math.min(window.innerWidth * .9 / w, window.innerHeight * .9 / h);
   let width = w * scaling, height = h * scaling;
-  let svg = d3.select('#vis').append('svg').attr('width', width).attr('height', height);
+  let svg = d3.select('#Raster2').attr('width', width).attr('height', height);
   let contours = d3.contours().size([w, h]);
   let contourData = contours(values);
   
   let colorScale = d3.scaleSequential(d3.extent(values), d3.interpolateBlues);
   let path = d3.geoPath();
-  let elevations = svg.selectAll('.elevations').data(contourData);
+  let elevations = svg.selectAll('#raster2').data(contourData);
   elevations.enter().append('path')
-      .attr('class', 'elevations')
       .attr('fill', d => colorScale(d.value))
       .attr('stroke', 'black')
       .attr('stroke-width', 0.0)
       .style('opacity', 0.9)
       .attr('d', d => path(d))
       .attr('transform', `scale(${scaling})`)
-      svg.append("text").attr("x", (w / 3.45)).attr("y", 25).text("January 2010 Precipitation").style("font-size", "14pt" ).attr("alignment-baseline","middle").style("fill", 'white');
+      .attr('clip-path', null)
+      svg.append("text").attr("x", (width / 2.4)).attr("y", 100).text("January 2010 Precipitation").style("font-size", "14pt" ).attr("alignment-baseline","middle").style("fill", 'white');
   
-  // draw legend
-  svg = d3.select('#vis').append('svg').attr('width', width).attr('height', height + 100);
-  let legend = d3.legendColor()
-      .scale(colorScale)
-      .orient('horizontal')
-      .shapeWidth(50)
-      .title('Rainfall (mm)')
-      .labels(["1", "10", "100", "200", "2000"]);
-  svg.append('g')
-      .attr('transform', `translate(10,${height -20})`)
-      .call(legend);
+  
+  
       
-  }
-  renderVis();
+  // draw legend
+  svg = d3.select('#World2').append('svg').attr('width', width).attr('height', height + 100).attr('id','legend');
+  let legend = d3.legendColor()
+  .scale(colorScale)
+  .orient('horizontal')
+  .shapeWidth(50)
+  .title('Rainfall (mm)')
+  .labels(["1", "10", "100", "200", "2000"]);
+  svg.append('g')
+      .attr('transform', `translate(5,100)`)
+      .call(legend);
   
+  
+  
+    }
+  
+  // used to create the map of the world over the raster
+     async function renderMap() {
+              const svg = d3.select("#World2");
+                  //width = +svg.attr("width"),
+                  //height = +svg.attr("height");
+                  let tiff = await d3.buffer('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/2010_Precipiations_720x360.TIFF')
+                      .then(buffer => GeoTIFF.fromArrayBuffer(buffer));
+                  let image = await tiff.getImage();
+  
+  
+                  let w = image.getWidth(), h = image.getHeight();
+                  let scaling = Math.min(window.innerWidth * .9 / w, window.innerHeight * .9 / h);
+                  let width = w * scaling, height = h * scaling;
+  
+              let projection = d3.geoMercator()
+                  .scale(230)
+                  .translate([width / 2, height / 2]);
+  
+              // Load external data and boot
+              d3.json("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/Africa.geojson").then(function (data) {
+  
+                  // Draw the map
+                  d3.select("#map2")
+                      .attr('width', width)
+                      .attr('height', height)
+                      .selectAll("path")
+                      .data(data.features)
+                      .join("path")
+                      .attr("fill", "none")
+                      .attr("d", d3.geoPath()
+                      .projection(projection)
+                      )
+                      .style("stroke", "black")
+                      .attr("stroke-width", 1.5)
+              })
+            }
+  
+  renderVis();
+  renderMap();
       </script>
-
-
   
 </body>
 </html>
