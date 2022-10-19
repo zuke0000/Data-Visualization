@@ -1,232 +1,183 @@
-<html>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src='https://d3js.org/d3.v6.min.js'></script>
-
-<script src='https://cdn.jsdelivr.net/npm/geotiff'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js'></script>
-
-<title>Global Rainfall</title>
-
-<header style="font-size: 15pt; color: #42403f; text-align: center;">Hypothesis: Rainfall in Africa is similar from years 2000 and 2010. </header>
-<header style="font-size: 12pt; color: #42403f; text-align: left;">Data of rainfall is taken from January, 2000 and January, 2010 by <a href="https://neo.gsfc.nasa.gov/view.php?datasetId=TRMM_3B43M&year=2000">https://neo.gsfc.nasa.gov/</a>. Rainfall data is for the mentioned month and may not be indicitive of wider trends.</header>
-<header style="font-size: 12pt; color: #42403f; text-align: left;">References: Riley Marsden assisted me with setting up the GEOJSON over the raster data. Additionally, I used this <a href="https://yangdanny97.github.io/blog/2020/11/26/D3-elevations">raster plot example</a>.</header>
-
-<style>
-  body {
-    background-color: whitesmoke;
-    margin: 1em auto;
-    margin-left: 30px;
-    width: 1600px;
-  }
-  svg {
-    background-color: transparent;
-  }
-  path.africa {
-    fill: whitesmoke;
-    stroke: #969696;
-    stroke: #000000;
-  }
-  #legend {
-    background-color: aqua;
-    background: #000000;
-    fill: whitesmoke;
-  }
-  /* #raster{
-    width:900px;
-    height:600px;
-    overflow:hidden;
-} */
-</style>
-
-
-<body>
-    <div id='vis'></div>
-
-    <svg class="godihate" id="World" width="1440" height="700">
-      <g id="raster"></g>
-      <g id="map"></g>
-  </svg>
-
-  <svg class="godihate" id="World2" width="1440" height="700">
-    <g id="raster2"></g>
-    <g id="map2"></g>
-</svg>
-</svg>
-
-
-<script>
-async function renderVis() {
-  let tiff = await d3.buffer('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/2000_Precipiations_720x360.TIFF')
-    .then(buffer => GeoTIFF.fromArrayBuffer(buffer));
-let image = await tiff.getImage();
-let rasters = await image.readRasters();
-let values = rasters[0];
-let w = image.getWidth(), h = image.getHeight();
-let scaling = Math.min(window.innerWidth * .9 / w, window.innerHeight * .9 / h);
-let width = w * scaling, height = h * scaling;
-let svg = d3.select('#Raster').attr('width', width).attr('height', height);
-let contours = d3.contours().size([w, h]);
-let contourData = contours(values);
-
-let colorScale = d3.scaleSequential(d3.extent(values), d3.interpolateBlues);
-let path = d3.geoPath();
-let elevations = svg.selectAll('#raster').data(contourData);
-elevations.enter().append('path')
-    .attr('fill', d => colorScale(d.value))
-    .attr('stroke', 'black')
-    .attr('stroke-width', 0.0)
-    .style('opacity', 0.9)
-    .attr('d', d => path(d))
-    .attr('transform', `scale(${scaling})`)
-    .attr('clip-path', null)
-    svg.append("text").attr("x", (width / 2.4)).attr("y", 100).text("January 2000 Precipitation").style("font-size", "14pt" ).attr("alignment-baseline","middle").style("fill", 'white');
-
-
-
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Map of fatal crashes in Chicago</title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
     
-// draw legend
-svg = d3.select('#World').append('svg').attr('width', width).attr('height', height + 100).attr('id','legend');
-let legend = d3.legendColor()
-.scale(colorScale)
-.orient('horizontal')
-.shapeWidth(50)
-.title('Rainfall (mm)')
-.labels(["1", "10", "100", "200", "2000"]);
-svg.append('g')
-    .attr('transform', `translate(5,100)`)
-    .call(legend);
-
-
-
-  }
-
-// used to create the map of the world over the raster
-   async function renderMap() {
-            const svg = d3.select("#World");
-                //width = +svg.attr("width"),
-                //height = +svg.attr("height");
-                let tiff = await d3.buffer('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/2000_Precipiations_720x360.TIFF')
-                    .then(buffer => GeoTIFF.fromArrayBuffer(buffer));
-                let image = await tiff.getImage();
-
-
-                let w = image.getWidth(), h = image.getHeight();
-                let scaling = Math.min(window.innerWidth * .9 / w, window.innerHeight * .9 / h);
-                let width = w * scaling, height = h * scaling;
-
-            let projection = d3.geoMercator()
-                .scale(230)
-                .translate([width / 2, height / 2]);
-
-            // Load external data and boot
-            d3.json("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/Africa.geojson").then(function (data) {
-
-                // Draw the map
-                d3.select("#map")
-                    .attr('width', width)
-                    .attr('height', height)
-                    .selectAll("path")
-                    .data(data.features)
-                    .join("path")
-                    .attr("fill", "none")
-                    .attr("d", d3.geoPath()
-                    .projection(projection)
-                    )
-                    .style("stroke", "black")
-                    .attr("stroke-width", 1.5)
-            })
-          }
-
-renderVis();
-renderMap();
-    </script>
-
-<script>
-  async function renderVis() {
-    let tiff = await d3.buffer('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/2010_Precipiations_720x360.TIFF')
-      .then(buffer => GeoTIFF.fromArrayBuffer(buffer));
-  let image = await tiff.getImage();
-  let rasters = await image.readRasters();
-  let values = rasters[0];
-  let w = image.getWidth(), h = image.getHeight();
-  let scaling = Math.min(window.innerWidth * .9 / w, window.innerHeight * .9 / h);
-  let width = w * scaling, height = h * scaling;
-  let svg = d3.select('#Raster2').attr('width', width).attr('height', height);
-  let contours = d3.contours().size([w, h]);
-  let contourData = contours(values);
-  
-  let colorScale = d3.scaleSequential(d3.extent(values), d3.interpolateBlues);
-  let path = d3.geoPath();
-  let elevations = svg.selectAll('#raster2').data(contourData);
-  elevations.enter().append('path')
-      .attr('fill', d => colorScale(d.value))
-      .attr('stroke', 'black')
-      .attr('stroke-width', 0.0)
-      .style('opacity', 0.9)
-      .attr('d', d => path(d))
-      .attr('transform', `scale(${scaling})`)
-      .attr('clip-path', null)
-      svg.append("text").attr("x", (width / 2.4)).attr("y", 100).text("January 2010 Precipitation").style("font-size", "14pt" ).attr("alignment-baseline","middle").style("fill", 'white');
+    <style>
+      body {
+        background-color: whitesmoke;
+        margin: 1em auto;
+        margin-left: 30px;
+        width: 1600px;
+      }
+      svg {
+        background-color: whitesmoke;
+      }
+      path.chicago {
+        fill: whitesmoke;
+        stroke: #969696;
+      }
+    </style>
+  </head>
+  <header style="font-size: 15pt; color: #42403f; text-align: center;">Hypothesis: Fatal crashes are more frequent in darkess than in daylight </header>
+  <header style="font-size: 12pt; color: #42403f; text-align: left;">Data of crashes from 2015 to present in Chicago by <a href="https://data.cityofchicago.org/Transportation/Traffic-Crashes-Crashes/85ca-t3if">data.cityofchicago.org</a>. Maps show crashes with at least one fatality. Crashes plotted for different lighting conditions. Darkness includes lighted roads.</header>
+  <header style="font-size: 12pt; color: #42403f; text-align: left;"><a href="https://raw.githubusercontent.com/RandomFractals/ChicagoCrimes/master/data/chicago-community-areas.geojson">Chicago GEOJSON map</a></header>
   
   
-  
+
+  <body>
+    <body2></body2>
+    <body3></body3>
+    <script>
+      var w = 700;
+      var h = 800;
+
       
-  // draw legend
-  svg = d3.select('#World2').append('svg').attr('width', width).attr('height', height + 100).attr('id','legend');
-  let legend = d3.legendColor()
-  .scale(colorScale)
-  .orient('horizontal')
-  .shapeWidth(50)
-  .title('Rainfall (mm)')
-  .labels(["1", "10", "100", "200", "2000"]);
-  svg.append('g')
-      .attr('transform', `translate(5,100)`)
-      .call(legend);
-  
-  
-  
-    }
-  
-  // used to create the map of the world over the raster
-     async function renderMap() {
-              const svg = d3.select("#World2");
-                  //width = +svg.attr("width"),
-                  //height = +svg.attr("height");
-                  let tiff = await d3.buffer('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/2010_Precipiations_720x360.TIFF')
-                      .then(buffer => GeoTIFF.fromArrayBuffer(buffer));
-                  let image = await tiff.getImage();
-  
-  
-                  let w = image.getWidth(), h = image.getHeight();
-                  let scaling = Math.min(window.innerWidth * .9 / w, window.innerHeight * .9 / h);
-                  let width = w * scaling, height = h * scaling;
-  
-              let projection = d3.geoMercator()
-                  .scale(230)
-                  .translate([width / 2, height / 2]);
-  
-              // Load external data and boot
-              d3.json("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/Africa.geojson").then(function (data) {
-  
-                  // Draw the map
-                  d3.select("#map2")
-                      .attr('width', width)
-                      .attr('height', height)
-                      .selectAll("path")
-                      .data(data.features)
-                      .join("path")
-                      .attr("fill", "none")
-                      .attr("d", d3.geoPath()
-                      .projection(projection)
-                      )
-                      .style("stroke", "black")
-                      .attr("stroke-width", 1.5)
-              })
-            }
-  
-  renderVis();
-  renderMap();
-      </script>
-  
-</body>
+
+      var map = d3.json("https://raw.githubusercontent.com/RandomFractals/ChicagoCrimes/master/data/chicago-community-areas.geojson", function(error, map) {
+        let svg = d3.select("body2")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h);
+        
+        if (error) return console.error(error)
+
+        let projection = d3.geoMercator().center([-100,35]) // Alternative, prolly doesnt matter,  remove parallels if using
+        //let projection = d3.geoAlbers()
+          .center([0, 41.83])
+          .rotate([87.65, 0])
+          //.parallels([40, 45])
+          .scale(60000)
+          .translate([w / 2, h / 2])
+
+          var myColor = d3.scaleSequential()
+          .interpolator(d3.interpolateRgb("lightblue", "red"))
+          .domain([1,6])
+
+        svg.selectAll("path")
+          .data(map.features)
+          .enter().append("path")
+          .attr("class", "chicago")
+          .attr("d", d3.geoPath().projection(projection))
+
+
+        let crashesData = d3.csv("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/daylightCrashes.csv");
+
+      const row = d => {
+        d.LATITUDE = +d.LATITUDE;
+        d.LONGITUDE = +d.LONGITUDE;
+        d.LIGHTING_CONDITION = +d.LIGHTING_CONDITION;
+        d.INJURIES_FATAL = +d.INJURIES_FATAL;
+        return d;
+      };
+          d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/daylightCrashes.csv', row, data => {
+
+ 
+          
+        // Draw data
+        svg.append('g').selectAll('circle')
+            .data(data)
+            .enter()
+            .append('circle')
+            .attr('r', 3)
+            .attr("cx", function(d) { return projection([d.LONGITUDE,d.LATITUDE])[0] })
+            .attr("cy", function(d) { return projection([d.LONGITUDE,d.LATITUDE])[1] })
+            .attr('fill-opacity', 1)
+            //.style("fill", "#00adee");
+            .style("fill", function(d) { return myColor(d.INJURIES_FATAL)} )
+
+      svg.append("text").attr("x", w / 3).attr("y", 75).text("Fatal Crashes in Daylight").style("font-size", "14pt" ).attr("alignment-baseline","middle").style("fill", '#42403f')
+      svg.append("text").attr("x", w / 10-14).attr("y", 335).text("Fatalities per Crash").style("font-size", "10pt" ).attr("alignment-baseline","middle")
+      // 1 death
+      svg.append("circle").attr("cx",w / 10-10).attr("cy",355).attr("r", 4).style("fill", function(d) { return myColor(1)} ).attr('fill-opacity', 1)
+      svg.append("text").attr("x", w / 10).attr("y", 355).text("1").style("font-size", "10pt" ).attr("alignment-baseline","middle")
+      // 2 deaths
+      svg.append("circle").attr("cx",w / 10-10).attr("cy",375).attr("r", 4).style("fill", function(d) { return myColor(2)} ).attr('fill-opacity', 1)
+      svg.append("text").attr("x", w / 10).attr("y", 375).text("2").style("font-size", "10pt",).attr("alignment-baseline","middle")
+      // 3 deaths
+      svg.append("circle").attr("cx",w / 10-10).attr("cy",395).attr("r", 4).style("fill", function(d) { return myColor(3)} ).attr('fill-opacity', 1)
+      svg.append("text").attr("x", w / 10).attr("y", 395).text("3").style("font-size", "10pt",).attr("alignment-baseline","middle")
+      // 4 deaths
+      svg.append("circle").attr("cx",w / 10-10).attr("cy",415).attr("r", 4).style("fill", function(d) { return myColor(4)} ).attr('fill-opacity', 1)
+      svg.append("text").attr("x", w / 10).attr("y", 415).text("4").style("font-size", "10pt",).attr("alignment-baseline","middle")
+      });
+      });
+    </script>
+    <script>
+      var w = 700;
+      var h = 800;
+
+      
+
+      var map = d3.json("https://raw.githubusercontent.com/RandomFractals/ChicagoCrimes/master/data/chicago-community-areas.geojson", function(error, map) {
+        let svg = d3.select("body3")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h);
+        
+        if (error) return console.error(error)
+
+        let projection = d3.geoMercator().center([-100,35]) // Alternative, prolly doesnt matter,  remove parallels if using
+        //let projection = d3.geoAlbers()
+          .center([0, 41.83])
+          .rotate([87.65, 0])
+          //.parallels([40, 45])
+          .scale(60000)
+          .translate([w / 2, h / 2])
+
+          var myColor = d3.scaleSequential()
+          .interpolator(d3.interpolateRgb("lightblue", "red"))
+          .domain([1,6])
+
+        svg.selectAll("path")
+          .data(map.features)
+          .enter().append("path")
+          .attr("class", "chicago")
+          .attr("d", d3.geoPath().projection(projection))
+
+
+        let crashesData = d3.csv("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/daylightCrashes.csv");
+
+      const row = d => {
+        d.LATITUDE = +d.LATITUDE;
+        d.LONGITUDE = +d.LONGITUDE;
+        d.LIGHTING_CONDITION = +d.LIGHTING_CONDITION;
+        d.INJURIES_FATAL = +d.INJURIES_FATAL;
+        return d;
+      };
+          d3.csv('https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/darknessCrashes.csv', row, data => {
+
+ 
+          
+        // Draw data
+        svg.append('g').selectAll('circle')
+            .data(data)
+            .enter()
+            .append('circle')
+            .attr('r', 3)
+            .attr("cx", function(d) { return projection([d.LONGITUDE,d.LATITUDE])[0] })
+            .attr("cy", function(d) { return projection([d.LONGITUDE,d.LATITUDE])[1] })
+            .attr('fill-opacity', 1)
+            //.style("fill", "#00adee");
+            .style("fill", function(d) { return myColor(d.INJURIES_FATAL)} )
+
+            svg.append("text").attr("x", w / 3).attr("y", 75).text("Fatal Crashes in Darkness").style("font-size", "14pt" ).attr("alignment-baseline","middle").style("fill", '#42403f')
+      svg.append("text").attr("x", w / 10-14).attr("y", 335).text("Fatalities per Crash").style("font-size", "10pt" ).attr("alignment-baseline","middle")
+      // 1 death
+      svg.append("circle").attr("cx",w / 10-10).attr("cy",355).attr("r", 4).style("fill", function(d) { return myColor(1)} ).attr('fill-opacity', 1)
+      svg.append("text").attr("x", w / 10).attr("y", 355).text("1").style("font-size", "10pt" ).attr("alignment-baseline","middle")
+      // 2 deaths
+      svg.append("circle").attr("cx",w / 10-10).attr("cy",375).attr("r", 4).style("fill", function(d) { return myColor(2)} ).attr('fill-opacity', 1)
+      svg.append("text").attr("x", w / 10).attr("y", 375).text("2").style("font-size", "10pt",).attr("alignment-baseline","middle")
+      // 3 deaths
+      svg.append("circle").attr("cx",w / 10-10).attr("cy",395).attr("r", 4).style("fill", function(d) { return myColor(3)} ).attr('fill-opacity', 1)
+      svg.append("text").attr("x", w / 10).attr("y", 395).text("3").style("font-size", "10pt",).attr("alignment-baseline","middle")
+      });
+      });
+    </script>
+    
+    
+  </body>
 </html>
