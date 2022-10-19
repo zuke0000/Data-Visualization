@@ -63,13 +63,42 @@ let legend = d3.legendColor()
     .scale(colorScale)
     .orient('horizontal')
     .shapeWidth(50)
-    .title('Rainfall (m)');
+    .title('Rainfall (mm)')
+    .labels(["1", "10", "100", "200", "2000"]);
 svg.append('g')
     .attr('transform', `translate(10,${height -20})`)
     .call(legend);
 }
-renderVis();
 
+
+// used to create the map of the world over the raster
+   function renderMap() {
+            const svg = d3.select("#vis"),
+                width = +svg.attr("width"),
+                height = +svg.attr("height");
+
+            let projection = d3.geoMercator()
+                .scale(100)
+                .translate([width / 2, height / 2]);
+
+            // Load external data and boot
+            d3.json("jsons/world.json").then(function (data) {
+
+                // Draw the map
+                d3.select("#allobj")
+                    .selectAll("path")
+                    .data(data.features)
+                    .join("path")
+                    .attr("fill", "none")
+                    .attr("d", d3.geoPath()
+                        .projection(projection)
+                    )
+                    .style("stroke", "black")
+            })
+          }
+
+renderVis();
+renderMap();
     </script>
 
 
@@ -107,7 +136,8 @@ renderVis();
       .scale(colorScale)
       .orient('horizontal')
       .shapeWidth(50)
-      .title('Rainfall (m)');
+      .title('Rainfall (mm)')
+      .labels(["1", "10", "100", "200", "2000"]);
   svg.append('g')
       .attr('transform', `translate(10,${height -20})`)
       .call(legend);
