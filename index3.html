@@ -5,9 +5,16 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 
 <!-- Create a div where the graph will take place -->
+
+
+<title>Trump Tweets</title>
+<header style="font-size: 15pt; color: #42403f; text-align: center;">Hypothesis: In a graph of the most frequent word transitions from Trump's Tweets, at least 75% of them form a connected component </header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;">Data comprises of Donald J. Trump's tweets from 2009 to 2021 sourced from <a href="https://www.kaggle.com/datasets/headsortails/trump-twitter-archive?resource=download">kaggle.com</a>.</header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;">Tweets were parsed and tallied in Python using various libraries. <a href="https://github.com/zuke0000/Data-Visualization/blob/main/Handle%20Trump%20Tweets.ipynb">Code linked here.</a>.</header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;">Idea inspired heavily by u/kilopeter's <a href="https://www.reddit.com/r/dataisbeautiful/comments/q6wad4/oc_network_graph_of_word_transitions_in_daft_punk/">Network Graph.</a>.</header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;"><a href="https://raw.githubusercontent.com/RandomFractals/ChicagoCrimes/master/data/chicago-community-areas.geojson">Chicago GEOJSON map</a></header>
+
 <div style="zoom: 3;" id="my_dataviz"></div>
-
-
 <script>
 
 // set the dimensions and margins of the graph
@@ -24,7 +31,7 @@ var svg = d3.select("#my_dataviz")
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/fidgetJSON.json", function( data) {
+d3.json("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/Trump_Tweets_Nodes.json", function( data) {
 
   // Initialize the links
   var link = svg
@@ -33,6 +40,19 @@ d3.json("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/fidg
     .enter()
     .append("line")
       .style("stroke", "#aaa")
+  var link2 = svg
+    .selectAll("line2")
+    .data(data.links)
+    .enter()
+    .append("line")
+        .style("stroke", "#33CD99")
+
+var link3 = svg
+    .selectAll("line3")
+    .data(data.links)
+    .enter()
+    .append("line")
+        .style("stroke", "#33CD99")
 
   // Initialize the nodes
   var node = svg
@@ -41,17 +61,17 @@ d3.json("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/fidg
     .enter()
     .append("circle")
       .attr("r", 5)
-      .style("fill", "#69b3a2")
+      .style("fill", "#1ea8fc")
 
     // initialize text
     var text = svg
         .selectAll("text")
         .data(data.nodes)
-        
         .enter()
         .append("text")
             .style("font-size", "4pt",)
             .style("text-anchor", "middle")
+    
         
 
 
@@ -73,8 +93,20 @@ d3.json("https://raw.githubusercontent.com/zuke0000/Data-Visualization/main/fidg
         .attr("y1", function(d) { return d.source.y / 4; })
         .attr("x2", function(d) { return d.target.x / 4; })
         .attr("y2", function(d) { return d.target.y / 4; });
-        //.attr("id", d => `arrow-${d.x}`);
 
+    // Abandoned arrows, clutter the graph too much
+    // link2
+    //     .attr("x1", function(d) { return d.source.x / 4; })
+    //     .attr("y1", function(d) { return d.source.y / 4; })
+    //     .attr("x2", function(d) { return d.target.x / 4; })
+    //     .attr("y2", function(d) { return d.target.y / 4; })
+    //     .attr("transform", function(d) { return `rotate(${15}, ${d.target.x/4} ${d.target.y/4})`});
+    // link3
+    //     .attr("x1", function(d) { return d.source.x / 4; })
+    //     .attr("y1", function(d) { return d.source.y / 4; })
+    //     .attr("x2", function(d) { return d.target.x / 4; })
+    //     .attr("y2", function(d) { return d.target.y / 4; })
+    //     .attr("transform", function(d) { return `rotate(${-15}, ${d.target.x/4} ${d.target.y/4})`});
     node
         .attr("cx", function (d) { return (d.x+6) / 4; })
         .attr("cy", function(d) { return (d.y-6) / 4; });
