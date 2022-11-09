@@ -9,11 +9,15 @@
 
 <title>Trump Tweets</title>
 <header style="font-size: 15pt; color: #42403f; text-align: center;">Hypothesis: In a graph of the most frequent word transitions from Trump's Tweets, at least 75% of them form a connected component </header>
-<header style="font-size: 12pt; color: #42403f; text-align: left;">Data comprises of Donald J. Trump's tweets from 2009 to 2021 sourced from <a href="https://www.kaggle.com/datasets/headsortails/trump-twitter-archive?resource=download">kaggle.com.</a></header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;">Data comprises of Donald J. Trump's tweets from 2009 to 2021 sourced from <a href="https://www.kaggle.com/datasets/headsortails/trump-twitter-archive?resource=download">kaggle.com.</a> Also note one data entry has been removed due to regex limitations.</header>
 <header style="font-size: 12pt; color: #42403f; text-align: left;">Tweets were parsed and tallied in Python using various libraries. <a href="https://github.com/zuke0000/Data-Visualization/blob/main/Handle%20Trump%20Tweets.ipynb">Code linked here.</a></header>
-<header style="font-size: 12pt; color: #42403f; text-align: left;">Idea inspired heavily by u/kilopeter's <a href="https://www.reddit.com/r/dataisbeautiful/comments/q6wad4/oc_network_graph_of_word_transitions_in_daft_punk/">Network Graph.</a></header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;">Idea inspired by u/kilopeter's <a href="https://www.reddit.com/r/dataisbeautiful/comments/q6wad4/oc_network_graph_of_word_transitions_in_daft_punk/">Network Graph.</a></header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;"><a href="https://d3-graph-gallery.com/graph/network_basic.html"> Reference</a> for D3 graph setup</header>
 
+<header style="font-size: 12pt; color: #42403f; text-align: center;">Node graph of most frequent word transitions</header>
+<header style="font-size: 10pt; color: #42403f; text-align: center;">23 words and 19 transitions </header>
 <table>
+    <header style="font-size: 10pt; color: #42403f; text-align: left;">Table of most frequent word transitions</header>
 	<thead>
 		<tr>
 			<td>First Word</td>
@@ -44,7 +48,7 @@
 	</tbody>
 </table>
 
-<div style="zoom: 3;" id="my_dataviz"></div>
+<div style="zoom: 2;" id="my_dataviz"></div>
 <script>
 
 // set the dimensions and margins of the graph
@@ -143,8 +147,7 @@ var link3 = svg
     text
         .text(function (d) { return d.name; })
         .attr("x",function (d) { return (d.x+6) / 4; })
-        .attr("y",function (d) { return (d.y-6) / 4; });
-    
+        .attr("y",function (d) { return (d.y-6) / 4; })
 
   }
 

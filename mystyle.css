@@ -81,6 +81,13 @@ stroke-width: 0;
 table {
 	border-collapse: collapse;
     font-family: Tahoma, Geneva, sans-serif;
+    position: absolute;
+}
+header{
+    font-family: Tahoma, Geneva, sans-serif;
+}
+a{
+    font-family: Tahoma, Geneva, sans-serif;
 }
 table td {
 	padding: 3px;
