@@ -4,34 +4,6 @@ body {
     margin-left: 30px;
     width: 1600px;
   }
-  svg {
-    background-color: whitesmoke;
-  }
-  path.chicago {
-    fill: whitesmoke;
-    stroke: #969696;
-  }
-  body{
-margin: 0;
-padding: 0;
-overflow:hidden;
-}
-
-p{ 
- text-align: center; 
- overflow: overlay;
- position: relative;
-}
-
-body{
--webkit-touch-callout: none;
--webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
-user-select: none;
-background-color: rgb(248, 248, 248)
-}
 
 #toolbox{
 position: absolute;
@@ -106,12 +78,27 @@ path.link.hidden{
 stroke-width: 0;
 }
 
-path.link.selected {
-stroke: rgb(229, 172, 247);
+table {
+	border-collapse: collapse;
+    font-family: Tahoma, Geneva, sans-serif;
 }
-#my_dataviz{
-zoom:2;
+table td {
+	padding: 3px;
 }
-#link2{
-transform: rotate(60deg);
+table thead td {
+	background-color: #54585d;
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 13px;
+	border: 1px solid #54585d;
+}
+table tbody td {
+	color: #636363;
+	border: 1px solid #dddfe1;
+}
+table tbody tr {
+	background-color: #f9fafb;
+}
+table tbody tr:nth-child(odd) {
+	background-color: #ffffff;
 }

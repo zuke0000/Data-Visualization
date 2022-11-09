@@ -3,24 +3,54 @@
 
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
-
+<link rel="stylesheet" href="mystyle.css">
 <!-- Create a div where the graph will take place -->
 
 
 <title>Trump Tweets</title>
 <header style="font-size: 15pt; color: #42403f; text-align: center;">Hypothesis: In a graph of the most frequent word transitions from Trump's Tweets, at least 75% of them form a connected component </header>
-<header style="font-size: 12pt; color: #42403f; text-align: left;">Data comprises of Donald J. Trump's tweets from 2009 to 2021 sourced from <a href="https://www.kaggle.com/datasets/headsortails/trump-twitter-archive?resource=download">kaggle.com</a>.</header>
-<header style="font-size: 12pt; color: #42403f; text-align: left;">Tweets were parsed and tallied in Python using various libraries. <a href="https://github.com/zuke0000/Data-Visualization/blob/main/Handle%20Trump%20Tweets.ipynb">Code linked here.</a>.</header>
-<header style="font-size: 12pt; color: #42403f; text-align: left;">Idea inspired heavily by u/kilopeter's <a href="https://www.reddit.com/r/dataisbeautiful/comments/q6wad4/oc_network_graph_of_word_transitions_in_daft_punk/">Network Graph.</a>.</header>
-<header style="font-size: 12pt; color: #42403f; text-align: left;"><a href="https://raw.githubusercontent.com/RandomFractals/ChicagoCrimes/master/data/chicago-community-areas.geojson">Chicago GEOJSON map</a></header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;">Data comprises of Donald J. Trump's tweets from 2009 to 2021 sourced from <a href="https://www.kaggle.com/datasets/headsortails/trump-twitter-archive?resource=download">kaggle.com.</a></header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;">Tweets were parsed and tallied in Python using various libraries. <a href="https://github.com/zuke0000/Data-Visualization/blob/main/Handle%20Trump%20Tweets.ipynb">Code linked here.</a></header>
+<header style="font-size: 12pt; color: #42403f; text-align: left;">Idea inspired heavily by u/kilopeter's <a href="https://www.reddit.com/r/dataisbeautiful/comments/q6wad4/oc_network_graph_of_word_transitions_in_daft_punk/">Network Graph.</a></header>
+
+<table>
+	<thead>
+		<tr>
+			<td>First Word</td>
+			<td>Second Word</td>
+			<td>Frequency</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr><td>of</td><td>the</td><td>4,127</td>
+        <tr><td>in</td><td>the</td><td>3,081</td>
+        <tr><td>will</td><td>be</td><td>2,661</td>
+        <tr><td>is</td><td>a</td><td>2,109</td>
+        <tr><td>to</td><td>the</td><td>1,951</td>
+        <tr><td>for</td><td>the</td><td>1,929</td>
+        <tr><td>on</td><td>the</td><td>1,677</td>
+        <tr><td>a</td><td>great</td><td>1,602</td>
+        <tr><td>to</td><td>be</td><td>1,389</td>    
+        <tr><td>and</td><td>the</td><td>1,248</td>
+        <tr><td>at</td><td>the</td><td>1,241</td>
+        <tr><td>is</td><td>the</td><td>1,101</td>
+        <tr><td>thank</td><td>you</td><td>1,070</td>
+        <tr><td>it</td><td>is</td><td>988</td>
+        <tr><td>we</td><td>are</td><td>967</td>
+        <tr><td>with</td><td>the</td><td>926</td>
+        <tr><td>donald</td><td>trump</td><td>916</td>
+        <tr><td>going</td><td>to</td><td>867</td>
+        <tr><td>they</td><td>are</td><td>804</td>    
+	</tbody>
+</table>
 
 <div style="zoom: 3;" id="my_dataviz"></div>
 <script>
 
 // set the dimensions and margins of the graph
 var margin = {top: 10, right: 30, bottom: 30, left: 40},
-  width = 1400 - margin.left - margin.right,
-  height = 2200 - margin.top - margin.bottom;
+  width = 1200 - margin.left - margin.right,
+  height = 1200 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 var svg = d3.select("#my_dataviz")
@@ -82,7 +112,7 @@ var link3 = svg
             .links(data.links)                                    // and this the list of links
       )
       .force("charge", d3.forceManyBody().strength(-400))         // This adds repulsion between nodes. Play with the -400 for the repulsion strength
-      .force("center", d3.forceCenter(width / 2, height / 2))     // This force attracts nodes to the center of the svg area
+      .force("center", d3.forceCenter(width *0.75, height *0.9))     // This force attracts nodes to the center of the svg area
       .on("end", ticked);
       
 
@@ -125,3 +155,4 @@ var link3 = svg
 
 
 </script>
+
